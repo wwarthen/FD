@@ -1,8 +1,8 @@
 ================================================================
-FDTST v3.2 for N8VEM DISKIO / DISKIO V3  / ZETA / DIDE / N8
+FDTST v3.3 for N8VEM DISKIO / ZETA / DIDE / N8
 ================================================================
 
-Updated June 17, 2013
+Updated March 13, 2015
 by Wayne Warthen (wwarthen@gmail.com)
 
 Application to test the hardware functionality of the Floppy Disk
@@ -22,14 +22,15 @@ time and access to required hardware.  Not all modes are supported
 on all platforms and some modes are experimental in all cases.
 
 In many ways this application is merely reinventing the wheel and
-performs functionality similer to existing applications, but I have
-not seen any other applications for DISK I/O that provide this range
+performs functionality similar to existing applications, but I have
+not seen any other applications for N8VEM hardware that provide this range
 of functionality.
 
 While the application is now almost entirely new code, I would like to
 acknowledge that much was derived from the previous work of Andrew Lynch
 and Dan Werner.  I also want to credit Sergio Gimenez with testing the 5.25"
-drive support and Jim Harre with testing the 8" drive support.  Thanks!
+drive support and Jim Harre with testing the 8" drive support.  Support for
+Zeta 2 comes from Segey Kiselev.  Thanks!
 
 General Usage
 -------------
@@ -61,9 +62,8 @@ card or a Zeta SBC.  Additionally, a floppy drive connected via an
 appropriate cable:
 
 DISKIO - no twist in cable, drive unit 0/1 must be selected by jumper on drive
-ZETA - cable with twist, unit 0 after twist, unit 1 before twist
+DISKIO3/ZETA/ZETA2 - cable with twist, unit 0 after twist, unit 1 before twist
 DIDE/N8 - cable with twist, unit 0 before twist, unit 1 after twist
-
 
 It is preferable that the BIOS you use does not have DISK I/O support
 enabled since the application assumes it has complete control of the
@@ -98,7 +98,8 @@ JP5: 1-2
 JP6: 1-2
 JP7: 1-2, 3-4
 
-Zeta does not have any relevant jumper settings.
+Zeta & Zeta 2 do not have any relevant jumper settings.  The hardwired
+I/O ranges are assumed in the code.
 
 DIDE should be jumpered as follows:
 
@@ -127,7 +128,7 @@ Interrupt: Input/output is interrupt driven.  Works pretty well, but
 is not able to recover from some errors.  For example, if there is
 no disk in the drive, this mode will just hang until a disk is inserted.
 This mode REQUIRES that interrupts be enabled on the DISK I/O via
-jumper at J1.  On Zeta it requires the INT/NMI jumper be set for
+jumper at J1.  On Zeta / Zeta 2 it requires the INT/NMI jumper be set for
 INT.  Mode not supported on DIDE or N8.  Some BIOS variants will not 
 handle interrupts during boot.
 
@@ -135,7 +136,7 @@ Fast Interrupt: As above, but sacrifices additional reliability for
 faster operation.  This mode will allow a 1.44MB floppy to work
 with a 4MHz Z80 CPU.  However, if any errors occur (even a transient
 read error which is not unusual), this mode will hang.  As above
-you MUST have the appropriate jumpers for DISKIO and Zeta.  DIDE
+you MUST have the appropriate jumpers for DISKIO and Zeta.  DIDE / N8
 does not support this mode.
 
 INT/WAIT: Same as Fast Interrupt, but uses CPU wait instead of
@@ -148,7 +149,7 @@ interrupts (J1) be enabled on the DISK I/O.  However, it is subject to
 all of the same reliability issues as "Fast Interrupt".  This
 mode is known to not work on N8VEM DISKIO!!!  It is included
 for testing only.  It is dependent on setting of J3.  This
-mode is NOT available on Zeta, DIDE, N8, or DISKIO V3.
+mode is NOT available on Zeta, Zeta 2, DIDE, N8, or DISKIO V3.
 
 The chart below attempts to describe the combinations that
 work for me.  By far, the most reliable mode is Polling,
@@ -431,3 +432,7 @@ YD-180 spec.  Now set to 50ms.
 WW 6/17/2013: v3.2
 
 Cleaned up SRT, HLT, and HUT values.
+
+SK 2/10/2015: v3.3
+
+Added Zeta SBC v2 support (Sergey Kiselev)
