@@ -31,6 +31,7 @@
 ;   2012-06-01: V2.9	ADDED INTERLEAVE CAPABILITY IN FORMAT COMMAND
 ;   2012-06-05: V3.0	DOCUMENTATION CLEANUP
 ;   2012-07-01: V3.1	MODIFY HLT FOR 8" MEDIA (50ms PER YD-180 SPEC)
+;   2013-06-17: V3.2	CLEANED UP THE SRT, HLT, AND HUT VALUES
 ;_______________________________________________________________________________
 ;
 ; BUILDING:
@@ -48,9 +49,9 @@
 ;
 ;_______________________________________________________________________________
 ;
-#DEFINE		VERSION		"3.1"
+#DEFINE		VERSION		"3.2"
 #DEFINE		VARIANT		"WW"
-#DEFINE		TIMESTAMP	"120701T0000"
+#DEFINE		TIMESTAMP	"130617T0000"
 ;
 CPUFREQ		.EQU		20		; IN MHZ, USED TO COMPUTE DELAY FACTORS
 ;
@@ -1264,6 +1265,35 @@ MIT:		; MEDIA INDEX TABLE
 		.DW	MDB_PC111
 MIT_ENTCNT	.EQU	(($ - MIT) / 2)
 ;
+; Specify Command:
+; +-----+-----+-----+-----+-----+-----+-----+-----+-----+
+; |Byte |  7  |  6  |  5  |  4  |  3  |  2  |  1  |  0  |
+; +-----+-----+-----+-----+-----+-----+-----+-----+-----+
+; |  0  |  0  |  0  |  0  |  0  |  0  |  0  |  1  |  1  |
+; |  1  | ----- STEP RATE ----- | -- HEAD UNLOAD TIME - |
+; |  2  | ------------ HEAD LOAD TIME ----------- | NDM |
+; +-----+-----+-----+-----+-----+-----+-----+-----+-----+
+;
+;
+; Step Rate (milliseconds):              Head Unload Time (milliseconds):       Head Load Time (milliseconds):                                                                   
+; +------+------+------+------+------+   +------+------+------+------+------+   +------+------+------+------+------+
+; |      |         BITRATE           |   |      |         BITRATE           |   |      |         BITRATE           |
+; |  VAL | 1.0M | 500K | 300K | 250K |   |  VAL | 1.0M | 500K | 300K | 250K |   |  VAL | 1.0M | 500K | 300K | 250K |
+; +------+------+------+------+------+   +------+------+------+------+------+   +------+------+------+------+------+
+; |    0 |  8.0 | 16.0 | 26.7 | 32.0 |   |    0 |  128 |  256 |  426 |  512 |   |    0 |  128 |  256 |  426 |  512 |
+; |    1 |  7.5 | 15.0 | 25.0 | 30.0 |   |    1 |    8 |   16 | 26.7 |   32 |   |    1 |    1 |    2 |  3.3 |    4 |
+; |    2 |  7.0 | 14.0 | 23.3 | 28.0 |   |    2 |   16 |   32 | 53.3 |   64 |   |    2 |    2 |    4 |  6.7 |    8 |
+; |  ... |  ... |  ... |  ... |  ... |   |  ... |  ... |  ... |  ... |  ... |   |  ... |  ... |  ... |  ... |  ... |
+; |   14 |  1.0 |  2.0 |  3.3 |  4.0 |   |   14 |  112 |  224 |  373 |  448 |   |  126 |  126 |  252 |  420 |  504 |
+; |   15 |  0.5 |  1.0 |  1.7 |  2.0 |   |   15 |  120 |  240 |  400 |  480 |   |  127 |  127 |  254 |  423 |  508 |
+; +------+------+------+------+------+   +------+------+------+------+------+   +------+------+------+------+------+
+;
+; IBM PS/2 CALLS FOR:
+;   STEP RATE: 3ms (6ms FOR ALL 41mm OR 720K DRIVES)
+;   HEAD LOAD TIME: 15ms
+; 
+; STATIC CONFIGURATION, NEVER CHANGES (PRIVATE)
+;
 MDB_PC720	.DW	DTL_PC720	; ADDRESS OF MEDIA LABEL
 		.DW	DTS_PC720	; ADDRESS OF MEDIA DESCRIPTION
 		.DB	050H		; NUMBER OF CYLINDERS
@@ -1274,8 +1304,8 @@ FCB_PC720	.DB	009H		; SECTOR COUNT
 		.DW	200H		; SECTOR SIZE IN BYTES
 		.DB	02AH		; GAP LENGTH (R/W)
 		.DB	050H		; GAP LENGTH (FORMAT)
-		.DB	0DFH		; STEP RATE, IBM PS/2 CALLS FOR 3ms, 0DH = 3ms SRT, HEAD UNLOAD TIME
-		.DB	004H		; HEAD LOAD TIME, IBM PS/2 CALLS FOR 15ms 08H = 16ms HUT
+		.DB	(13 << 4) | 0	; SRT = 6ms, HUT = 512ms
+		.DB	4		; HLT = 16ms
 		.DB	DOR_BR250	; OPERATIONS REGISTER VALUE
 		.DB	DCR_BR250	; CONTROL REGISTER VALUE
 		.IF	(($ - MDB_PC720) != MDB_LEN)
@@ -1294,8 +1324,8 @@ FCB_PC144	.DB	012H		; SECTOR COUNT
 		.DW	200H		; SECTOR SIZE IN BYTES
 		.DB	01BH		; GAP LENGTH (R/W)
 		.DB	06CH		; GAP LENGTH (FORMAT)
-		.DB	0DFH		; STEP RATE, IBM PS/2 CALLS FOR 3ms, 0DH = 3ms SRT, HEAD UNLOAD TIME
-		.DB	008H		; HEAD LOAD TIME, IBM PS/2 CALLS FOR 15ms 08H = 16ms HUT
+		.DB	(13 << 4) | 0	; SRT = 3ms, HUT = 256ms
+		.DB	8		; HLT = 16ms
 		.DB	DOR_BR500	; OPERATIONS REGISTER VALUE
 		.DB	DCR_BR500	; CONTROL REGISTER VALUE
 		.IF	(($ - MDB_PC144) != MDB_LEN)
@@ -1314,8 +1344,8 @@ FCB_PC320	.DB	008H		; SECTOR COUNT
 		.DW	200H		; SECTOR SIZE IN BYTES
 		.DB	02AH		; GAP LENGTH (R/W)
 		.DB	050H		; GAP LENGTH (FORMAT)
-		.DB	0DFH		; STEP RATE, IBM PS/2 CALLS FOR 3ms, 0DH = 3ms SRT, HEAD UNLOAD TIME
-		.DB	004H		; HEAD LOAD TIME, IBM PS/2 CALLS FOR 15ms 08H = 16ms HUT
+		.DB	(13 << 4) | 0	; SRT = 6ms, HUT = 512ms
+		.DB	4		; HLT = 16ms
 		.DB	DOR_BR250	; OPERATIONS REGISTER VALUE
 		.DB	DCR_BR250	; CONTROL REGISTER VALUE
 		.IF	(($ - MDB_PC320) != MDB_LEN)
@@ -1334,8 +1364,8 @@ FCB_PC360	.DB	009H		; SECTOR COUNT
 		.DW	200H		; SECTOR SIZE IN BYTES
 		.DB	02AH		; GAP LENGTH (R/W)
 		.DB	050H		; GAP LENGTH (FORMAT)
-		.DB	0DFH		; STEP RATE, IBM PS/2 CALLS FOR 3ms, 0DH = 3ms SRT, HEAD UNLOAD TIME
-		.DB	004H		; HEAD LOAD TIME, IBM PS/2 CALLS FOR 15ms 08H = 16ms HUT
+		.DB	(13 << 4) | 0	; SRT = 6ms, HUT = 512ms
+		.DB	4		; HLT = 16ms
 		.DB	DOR_BR250	; OPERATIONS REGISTER VALUE
 		.DB	DCR_BR250	; CONTROL REGISTER VALUE
 		.IF	(($ - MDB_PC360) != MDB_LEN)
@@ -1354,8 +1384,8 @@ FCB_PC120	.DB	00FH		; SECTOR COUNT
 		.DW	200H		; SECTOR SIZE IN BYTES
 		.DB	01BH		; GAP LENGTH (R/W)
 		.DB	054H		; GAP LENGTH (FORMAT)
-		.DB	0DFH		; STEP RATE, IBM PS/2 CALLS FOR 3ms, 0DH = 3ms SRT, HEAD UNLOAD TIME
-		.DB	008H		; HEAD LOAD TIME, IBM PS/2 CALLS FOR 15ms 08H = 16ms HUT
+		.DB	(10 << 4) | 0	; SRT = 6ms, HUT = 256ms
+		.DB	8		; HLT = 16ms
 		.DB	DOR_BR500	; OPERATIONS REGISTER VALUE
 		.DB	DCR_BR500	; CONTROL REGISTER VALUE
 		.IF	(($ - MDB_PC120) != MDB_LEN)
@@ -1366,7 +1396,7 @@ DTS_PC120	.TEXT	"5.25\" 1.2MB - 15 SECTORS, 2 SIDES, 80 TRACKS, HIGH DENSITY$"
 ;	
 MDB_PC111	.DW	DTL_PC111	; ADDRESS OF MEDIA LABEL
 		.DW	DTS_PC111	; ADDRESS OF MEDIA DESCRIPTION
-		.DB	04AH		; NUMBER OF CYLINDERS
+		.DB	04DH		; NUMBER OF CYLINDERS
 		.DB	002H		; NUMBER OF HEADS
 		.DB	00FH		; NUMBER OF SECTORS
 		.DB	001H		; START OF TRACK (ID OF FIRST SECTOR, USUALLY 1)
@@ -1374,15 +1404,15 @@ FCB_PC111	.DB	00FH		; SECTOR COUNT
 		.DW	200H		; SECTOR SIZE IN BYTES
 		.DB	01BH		; GAP LENGTH (R/W)
 		.DB	054H		; GAP LENGTH (FORMAT)
-		.DB	0DFH		; PER YD-180 SPEC, STEP RATE=3ms=0DH SRT, HEAD UNLOAD TIME
-		.DB	020H		; HEAD LOAD TIME, 50ms PER YD-180 SPEC
+		.DB	(13 << 4) | 0	; SRT = 3ms, HUT = 256ms
+		.DB	25		; HLT = 50ms
 		.DB	DOR_BR500	; OPERATIONS REGISTER VALUE
 		.DB	DCR_BR500	; CONTROL REGISTER VALUE
 		.IF	(($ - MDB_PC111) != MDB_LEN)
 		.ECHO	"*** FCB SIZE ERROR!!! ***\n"
 		.ENDIF
 DTL_PC111	.TEXT	"1.11MB$"
-DTS_PC111	.TEXT	"8\" 1.11MB - 15 SECTORS, 2 SIDES, 74 TRACKS, DOUBLE DENSITY$"
+DTS_PC111	.TEXT	"8\" 1.11MB - 15 SECTORS, 2 SIDES, 77 TRACKS, DOUBLE DENSITY$"
 ;	
 ;===============================================================================
 ; FLOPPY DISK CONTROL MENU (DIRECT MENU INTERFACE TO FDC & RELATED HARDWARE)
