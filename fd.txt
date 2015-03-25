@@ -16,8 +16,8 @@ well as a random read/write test.
 
 The application supports access modes of polling, interrupt, 
 INT/WAIT, and DRQ/WAIT.  At present, it supports 3.5" media at DD (720KB) and
-HD (1.44MB) capacities.  It now supports 5.25" media as well
-(720KB and 1.2MB).   Additonal media will be added when I have
+HD (1.44MB) capacities.  It now supports 5.25" media (720KB and 1.2MB)
+and 8" media (1.11MB) as well.   Additonal media will be added when I have
 time and access to required hardware.  Not all modes are supported
 on all platforms and some modes are experimental in all cases.
 
@@ -28,7 +28,8 @@ of functionality.
 
 While the application is now almost entirely new code, I would like to
 acknowledge that much was derived from the previous work of Andrew Lynch
-and Dan Werner.
+and Dan Werner.  I also want to credit Sergio Gimenez with testing the 5.25"
+drive support and Jim Harre with testing the 8" drive support.  Thanks!
 
 General Usage
 -------------
@@ -358,3 +359,8 @@ WW 2/6/2012: v2.6
 
 Added support for 5.25" drives as tested by
 Sergio.
+
+WW 4/5/2012: v2.7
+
+Added support for 8" drives as tested by
+Jim Harre.
