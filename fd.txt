@@ -1,8 +1,8 @@
 ================================================================
-FDTST v2.7b for N8VEM DISKIO / DISKIO V3  / ZETA / DIDE / N8
+FDTST v2.8 for N8VEM DISKIO / DISKIO V3  / ZETA / DIDE / N8
 ================================================================
 
-Updated April 8, 2012
+Updated May 22, 2012
 by Wayne Warthen (wwarthen@gmail.com)
 
 Application to test the hardware functionality of the Floppy Disk
@@ -374,3 +374,7 @@ WW 4/8/2012: v2.7b
 
 Corrected the handling of the density select
 signal.
+
+WW 5/22/2012: v2.8
+
+Added new media definitions (5.25", 320K)
