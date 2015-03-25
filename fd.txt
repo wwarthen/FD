@@ -1,8 +1,8 @@
 ================================================================
-FDTST v3.3 for N8VEM DISKIO / ZETA / DIDE / N8
+FD v4.0 for N8VEM DISKIO / ZETA / DIDE / N8
 ================================================================
 
-Updated March 13, 2015
+Updated March 25, 2015
 by Wayne Warthen (wwarthen@gmail.com)
 
 Application to test the hardware functionality of the Floppy Disk
@@ -269,12 +269,12 @@ drives.  However, it will generally not work
 with 1.2M drives.  This is because these drives spin at 360RPM
 instead of the 300RPM speed of true 360K drives.  Additionally,
 1.2M drives are 80 tracks and 360K drives are 40 tracks and, so
-far, there is no mechanism in FDTST to "double step" as a way
+far, there is no mechanism in FD to "double step" as a way
 to use 40 track media in 80 track drives.
 
 With this said, it is possible to configure some 1.2M 5.25" drives
 to automatically spin down to 300RPM based on a density select
-signal (DENSEL).  This signal is asserted by FDTST for 360K
+signal (DENSEL).  This signal is asserted by FD for 360K
 media, so IF you have configured your drive to react to this
 signal correctly, you will be able to use the 360K media defintion.
 Most 1.2M 5.25" drives are NOT configured this way by default.
@@ -436,3 +436,7 @@ Cleaned up SRT, HLT, and HUT values.
 SK 2/10/2015: v3.3
 
 Added Zeta SBC v2 support (Sergey Kiselev)
+
+WW 3/25/2015: v4.0
+
+Renamed from FDTST --> FD

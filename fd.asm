@@ -1,5 +1,5 @@
 ;===============================================================================
-; FDTST - FLOPPY DISK TEST PROGRAM FOR N8VEM VARIANTS
+; FD - FLOPPY DISK MONITOR PROGRAM FOR N8VEM VARIANTS
 ;===============================================================================
 ;
 ;	AUTHOR:  WAYNE WARTHEN (DERIVED FROM FDCMON BY ANDREW LYNCH & DAN WERNER)
@@ -33,11 +33,12 @@
 ;   2012-07-01: V3.1	MODIFY HLT FOR 8" MEDIA (50ms PER YD-180 SPEC)
 ;   2013-06-17: V3.2	CLEANED UP THE SRT, HLT, AND HUT VALUES
 ;   2015-02-10: V3.3	ADDED ZETA SBC V2 SUPPORT (SERGEY KISELEV)
+;   2015-03-25: V4.0	RENAMED APP FDTST --> FD
 ;_______________________________________________________________________________
 ;
 ; BUILDING:
 ;   CAN BE BUILT WITH TASM LIKE THIS:
-;      TASM -t80 -b -g3 FDTST.ASM FDTST.COM
+;      TASM -t80 -b -g3 -fFF -dFDPLT=PLT_DISKIO FD.ASM FD.COM
 ;
 ; TODO:
 ;   1) CURRENT TRACK IS UPDATED EVEN IF SEEK FAILS! (DEFER, RECOVERS AUTOMATICALLY)
@@ -50,9 +51,9 @@
 ;
 ;_______________________________________________________________________________
 ;
-#DEFINE		VERSION		3.3
-#DEFINE		VARIANT		SK
-#DEFINE		TIMESTAMP	150313T0000
+#DEFINE		VERSION		4.0
+#DEFINE		VARIANT		WW
+#DEFINE		TIMESTAMP	150325T0000
 ;
 CPUFREQ		.EQU		20		; IN MHZ, USED TO COMPUTE DELAY FACTORS
 ;
@@ -64,15 +65,15 @@ PLT_ZETA2	.EQU		4
 PLT_DIDE	.EQU		5
 PLT_N8		.EQU		6
 ;
-#DEFINE		FDTSTPLT	PLT_NONE
+#DEFINE		FDPLT		PLT_NONE	; OVERRIDE ON COMMAND LINE!
 ;
-PLATFORM	.EQU		FDTSTPLT
+PLATFORM	.EQU		FDPLT
 ;
 #IF (PLATFORM == PLT_DISKIO)
-  #DEFINE 	PLATFORM_NAME	"N8VEM DISKIO"
+  #DEFINE 	PLATFORM_NAME	"DISKIO"
 #ENDIF
 #IF (PLATFORM == PLT_DISKIO3)
-  #DEFINE 	PLATFORM_NAME	"N8VEM DISKIO V3"
+  #DEFINE 	PLATFORM_NAME	"DISKIO V3"
 #ENDIF
 #IF (PLATFORM == PLT_ZETA)
   #DEFINE 	PLATFORM_NAME	"ZETA SBC"
@@ -81,7 +82,7 @@ PLATFORM	.EQU		FDTSTPLT
   #DEFINE 	PLATFORM_NAME	"ZETA SBC V2"
 #ENDIF
 #IF (PLATFORM == PLT_DIDE)
-  #DEFINE 	PLATFORM_NAME	"N8VEM DUAL IDE"
+  #DEFINE 	PLATFORM_NAME	"DUAL IDE"
 #ENDIF
 #IF (PLATFORM == PLT_N8)
   #DEFINE 	PLATFORM_NAME	"N8"
@@ -163,7 +164,7 @@ FDC_DMA		.EQU	03CH		; NOT USED BY ZETA SBC V2
 	HALT				; SHOULD NEVER GET HERE
 
 ;
-STR_BANNER	.TEXT	"FDTST v"
+STR_BANNER	.TEXT	"FD v"
 		.TEXT	VERSION
 		.TEXT	" ("
 		.TEXT	VARIANT
@@ -198,7 +199,7 @@ MM_INFO:	.DW	MM_DRAW
 ; MAIN MENU DISPLAY STRINGS
 ;
 STR_MAINMENU:
-	.TEXT	"======================<< FDTST MAIN MENU >>=====================\r\n"
+	.TEXT	"=======================<< FD MAIN MENU >>=======================\r\n"
 ;	.TEXT	"(S)ETUP: UNIT=XX  MEDIA=XXXXXX  MODE=XXXXXXXXXX  TRACE=XX\r\n"
 	.TEXT	"(S)ETUP: UNIT="
 MV_UNIT	.TEXT	              "XX"
@@ -1471,8 +1472,8 @@ FM_INFO:	.DW	FM_DRAW
 ; FDC COMMAND MENU STRINGS
 ;
 STR_FDCMENU:
-;	.TEXT	"==================<< FDTST FDC COMMAND MENU >>===== [MSR=XX] ===\r\n"
-	.TEXT   "==================<< FDTST FDC COMMAND MENU >>===== [MSR="
+;	.TEXT	"===================<< FD FDC COMMAND MENU >>======= [MSR=XX] ===\r\n"
+	.TEXT   "===================<< FD FDC COMMAND MENU >>======= [MSR="
 MV_MSR	.TEXT	                                                         "XX"
 	.TEXT	                                                           "] ===\r\n"
 	.TEXT	"(R)EAD          READ (D)EL      (W)RITE         WRITE D(E)L\r\n"
