@@ -1,13 +1,14 @@
 ================================================================
-FDTST v2.5 for N8VEM DISKIO / DISKIO V3  / ZETA / DIDE / N8
+FDTST v2.6 for N8VEM DISKIO / DISKIO V3  / ZETA / DIDE / N8
 ================================================================
 
-Updated January 9, 2012
+Updated Fegruary 6, 2012
 by Wayne Warthen (wwarthen@gmail.com)
 
 Application to test the hardware functionality of the Floppy Disk
 Controller (FDC) on the ECB DISK I/O, DISK I/O V3, ZETA SBC, 
 Dual IDE w/ Floppy, or N8 board.
+
 The intent is to provide a testbed that allows direct testing
 of all possible media types and modes of access.  The application
 supports read, write, and format by sector, track, and disk as
@@ -15,7 +16,8 @@ well as a random read/write test.
 
 The application supports access modes of polling, interrupt, 
 INT/WAIT, and DRQ/WAIT.  At present, it supports 3.5" media at DD (720KB) and
-HD (1.44MB) capacities.  Additonal media will be added when I have
+HD (1.44MB) capacities.  It now supports 5.25" media as well
+(720KB and 1.2MB).   Additonal media will be added when I have
 time and access to required hardware.  Not all modes are supported
 on all platforms and some modes are experimental in all cases.
 
@@ -86,9 +88,14 @@ long as the BIOS is OK with it, that is fine.  Note also that J3 is
 only relevant for DMA modes, but also can be left in place when
 using other modes.
 
-The DISK I/O V3 should be jumpered as follows:
+The DISK I/O V3 should be jumpered at the default settings:
 
-	<TBD>
+JP2: 3-4
+JP3: 1-2 for int mode support, otherwise no jumper
+JP4: 1-2, 3-4
+JP5: 1-2
+JP6: 1-2
+JP7: 1-2, 3-4
 
 Zeta does not have any relevant jumper settings.
 
@@ -233,10 +240,10 @@ CPU Speed
 ---------
 
 I distribute the binary version of the application optimized for
-8MHz CPUs.  There is a configuration variable called CPUFREQ
+20MHz CPUs.  There is a configuration variable called CPUFREQ
 at the top of the source file.  Ideally, you should build
 with that set appropriately.  However, I have found that the
-default build setting of 8MHz seems to work well for 4-10MHz CPUs.
+default build setting of 20MHz seems to work for 4-20MHz CPUs.
 
 Support
 -------
@@ -346,3 +353,8 @@ call so that a warm start is done and all
 drives are logged out.  This is important
 because media may have been formatted during
 the program execution.
+
+WW 2/6/2012: v2.6
+
+Added support for 5.25" drives as tested by
+Sergio.
