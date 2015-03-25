@@ -29,6 +29,7 @@
 ;   2012-04-08: V2.7b	HANDLE DENSITY SELECT PROPERLY
 ;   2012-05-22: V2.8	ADDED NEW MEDIA DEFINITIONS (5.25", 320K)
 ;   2012-06-01: V2.9	ADDED INTERLEAVE CAPABILITY IN FORMAT COMMAND
+;   2012-06-05: V3.0	DOCUMENTATION CLEANUP
 ;_______________________________________________________________________________
 ;
 ; BUILDING:
@@ -46,9 +47,9 @@
 ;
 ;_______________________________________________________________________________
 ;
-#DEFINE		VERSION		"2.9"
+#DEFINE		VERSION		"3.0"
 #DEFINE		VARIANT		"WW"
-#DEFINE		TIMESTAMP	"120601T0000"
+#DEFINE		TIMESTAMP	"120605T0000"
 ;
 CPUFREQ		.EQU		20		; IN MHZ, USED TO COMPUTE DELAY FACTORS
 ;

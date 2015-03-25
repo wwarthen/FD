@@ -1,8 +1,8 @@
 ================================================================
-FDTST v2.8 for N8VEM DISKIO / DISKIO V3  / ZETA / DIDE / N8
+FDTST v3.0 for N8VEM DISKIO / DISKIO V3  / ZETA / DIDE / N8
 ================================================================
 
-Updated May 22, 2012
+Updated June 5, 2012
 by Wayne Warthen (wwarthen@gmail.com)
 
 Application to test the hardware functionality of the Floppy Disk
@@ -16,7 +16,7 @@ well as a random read/write test.
 
 The application supports access modes of polling, interrupt, 
 INT/WAIT, and DRQ/WAIT.  At present, it supports 3.5" media at DD (720KB) and
-HD (1.44MB) capacities.  It now supports 5.25" media (720KB and 1.2MB)
+HD (1.44MB) capacities.  It also now supports 5.25" media (720KB and 1.2MB)
 and 8" media (1.11MB) as well.   Additonal media will be added when I have
 time and access to required hardware.  Not all modes are supported
 on all platforms and some modes are experimental in all cases.
@@ -165,16 +165,23 @@ CPU Speed --------------+    |  |  |  |  |
                         |    |  |  |  |  |
 
 3.5" DD (720K) ------  4MHz  Y  Y  Y  Y  X
-                       8MHz  Y  Y  Y  Y  X
+                       8MHz+ Y  Y  Y  Y  X
 
 3.5" HD (1.44M) -----  4MHz  N  N  Y  Y  X
-                       8MHz  Y  Y  Y  Y  X
+                       8MHz+ Y  Y  Y  Y  X
+					   
+5.25" DD (360K) -----  4MHz  Y  Y  Y  Y  X
+                       8MHz+ Y  Y  Y  Y  X
+
+5.25" HD (1.2M) -----  4MHz  N  N  Y  Y  X
+                       8MHz+ Y  Y  Y  Y  X
+					   
+8" DD (1.11M) -------  4MHz  N  N  Y  Y  X
+                       8MHz+ Y  Y  Y  Y  X
 					   
 Y = Yes, works
 N = No, does not work
 X = Experimental, probably won't work
-
-I plan to procure and test a 5 1/4" drive in the near future.
 
 Tracing
 -------
@@ -245,6 +252,35 @@ I distribute the binary version of the application optimized for
 at the top of the source file.  Ideally, you should build
 with that set appropriately.  However, I have found that the
 default build setting of 20MHz seems to work for 4-20MHz CPUs.
+
+Interleave
+----------
+
+The format command now allows the specification of a sector
+interleave.  It is almost always the case that the optimal
+interleave will be 2 (meaning 2:1).
+
+360K Media
+----------
+
+The 360K media definition should work well for true 360K
+drives.  However, it will generally not work
+with 1.2M drives.  This is because these drives spin at 360RPM
+instead of the 300RPM speed of true 360K drives.  Additionally,
+1.2M drives are 80 tracks and 360K drives are 40 tracks and, so
+far, there is no mechanism in FDTST to "double step" as a way
+to use 40 track media in 80 track drives.
+
+With this said, it is possible to configure some 1.2M 5.25" drives
+to automatically spin down to 300RPM based on a density select
+signal (DENSEL).  This signal is asserted by FDTST for 360K
+media, so IF you have configured your drive to react to this
+signal correctly, you will be able to use the 360K media defintion.
+Most 1.2M 5.25" drives are NOT configured this way by default.
+TEAC drives are generally easy to modify and have been tested by
+the author and do work in this manner.  Note that this does not 
+address the issue of double stepping above; you will just be 
+using the first 40 of 80 tracks.
 
 Support
 -------
@@ -382,3 +418,7 @@ Added new media definitions (5.25", 320K)
 WW 6/1/2012: v2.9
 
 Added interleave capability on format
+
+WW 6/5/2012: v3.0
+
+Documentation cleanup
