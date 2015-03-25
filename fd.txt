@@ -1,8 +1,8 @@
 ================================================================
-FDTST v3.0 for N8VEM DISKIO / DISKIO V3  / ZETA / DIDE / N8
+FDTST v3.1 for N8VEM DISKIO / DISKIO V3  / ZETA / DIDE / N8
 ================================================================
 
-Updated June 5, 2012
+Updated JuLY 1, 2012
 by Wayne Warthen (wwarthen@gmail.com)
 
 Application to test the hardware functionality of the Floppy Disk
@@ -422,3 +422,8 @@ Added interleave capability on format
 WW 6/5/2012: v3.0
 
 Documentation cleanup
+
+WW 7/1/2012: v3.1
+
+Modified head load time (HLT) for 8" media based on
+YD-180 spec.  Now set to 50ms.
