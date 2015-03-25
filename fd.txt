@@ -378,3 +378,7 @@ signal.
 WW 5/22/2012: v2.8
 
 Added new media definitions (5.25", 320K)
+
+WW 6/1/2012: v2.9
+
+Added interleave capability on format
