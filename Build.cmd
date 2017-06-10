@@ -5,8 +5,8 @@ set TASMPATH=..\Tools\tasm32
 set TASMTABS=%TASMPATH%
 set PATH=%TASMPATH%;%PATH%
 
-call :asm DISKIO
-call :asm DISKIO3
+call :asm DIO
+call :asm DIO3
 call :asm ZETA
 call :asm ZETA2
 call :asm DIDE
